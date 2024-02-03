@@ -2,8 +2,27 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+	 <PackageId>FinnishSSNet</PackageId>
+	 <Version>0.1.0</Version>
+	 <Description>Finnish social security number (SSN) parser for .NET</Description>
+	 <PackageTags>Finnish social security number, SSN, PIN, parser</PackageTags>
+	 <Authors>Joni Kyrönlahti</Authors>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	 <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	 <PackageProjectUrl>https://github.com/Jonikyro/FinnishSSNet</PackageProjectUrl>
+	 <PackageLicenseUrl>https://raw.githubusercontent.com/Jonikyro/FinnishSSNet/main/LICENSE</PackageLicenseUrl>
+	 <RepositoryUrl>https://github.com/Jonikyro/FinnishSSNet</RepositoryUrl>
+	 <PublishRepositoryUrl>true</PublishRepositoryUrl>
+	 <RepositoryType>git</RepositoryType>
+	 <IncludeSource>true</IncludeSource>
+	 <IncludeSymbols>true</IncludeSymbols>
+	 <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	 <EmbedUntrackedSources>false</EmbedUntrackedSources>
+	 <LangVersion>latest</LangVersion>
+	 <EnableNETAnalyzers>true</EnableNETAnalyzers>
+	 <AnalysisLevel>latest</AnalysisLevel>
+	 <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
 </Project>
