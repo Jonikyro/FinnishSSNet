@@ -11,7 +11,9 @@ public enum Gender
 
 [Serializable]
 [DebuggerDisplay("{ToString(),nq}")]
+#pragma warning disable S101 // Types should be named in PascalCase
 public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
+#pragma warning restore S101 // Types should be named in PascalCase
 {
 	// ddmmyysrrrc
 	private const int EXPECTED_LENGTH = 11;
@@ -26,10 +28,10 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 
 	private const string CHECKSUM_CHARS = "0123456789ABCDEFHJKLMNPRSTUVWXY";
 
-	private static readonly SearchValues<char> _digits = SearchValues.Create("0123456789");
-	private static readonly SearchValues<char> _separators = SearchValues.Create("+-YXWVUABCDEF");
-	private static readonly SearchValues<char> _checksumChars = SearchValues.Create(CHECKSUM_CHARS);
-	private static readonly IDictionary<char, string> _centuryMap = new Dictionary<char, string>
+	private static readonly SearchValues<char> s_digits = SearchValues.Create("0123456789");
+	private static readonly SearchValues<char> s_separators = SearchValues.Create("+-YXWVUABCDEF");
+	private static readonly SearchValues<char> s_checksumChars = SearchValues.Create(CHECKSUM_CHARS);
+	private static readonly IDictionary<char, string> s_centuryMap = new Dictionary<char, string>
 	 {
 		  { '+', "18" },
 		  { '-', "19" },
@@ -53,10 +55,10 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 
 	private FinnishSSN(string ssn, Gender gender, DateOnly dateOfBirth)
 	{
-		_ssn = ssn;
-		DateOfBirth = dateOfBirth;
-		Gender = gender;
-		IsValid = true;
+		this._ssn = ssn;
+		this.DateOfBirth = dateOfBirth;
+		this.Gender = gender;
+		this.IsValid = true;
 	}
 
 	/// <summary>
@@ -123,25 +125,25 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 			return false;
 		}
 
-		if (ssn[..DATEPART_LENGTH].ContainsAnyExcept(_digits))
+		if (ssn[..DATEPART_LENGTH].ContainsAnyExcept(s_digits))
 		{
 			return false;
 		}
 
-		if (ssn.Slice(DATEPART_LENGTH, SEPARATOR_LENGTH).ContainsAnyExcept(_separators))
+		if (ssn.Slice(DATEPART_LENGTH, SEPARATOR_LENGTH).ContainsAnyExcept(s_separators))
 		{
 			return false;
 		}
 
 		if (ssn.Slice(DATEPART_LENGTH + SEPARATOR_LENGTH, ROLLING_NUMBER_LENGTH)
-				  .ContainsAnyExcept(_digits))
+				  .ContainsAnyExcept(s_digits))
 		{
 			return false;
 		}
 
 		if (ssn.Slice(
 				DATEPART_LENGTH + SEPARATOR_LENGTH + ROLLING_NUMBER_LENGTH, CHECKSUM_LENGTH)
-					 .ContainsAnyExcept(_checksumChars))
+					 .ContainsAnyExcept(s_checksumChars))
 		{
 			return false;
 		}
@@ -217,7 +219,7 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 		ReadOnlySpan<char> lastTwoDigitsOfYear = ssn.Slice(4, 2);
 		char separator = ssn.Slice(DATEPART_LENGTH, SEPARATOR_LENGTH)[0];
 
-		string firstTwoDigitsOfYear = _centuryMap[separator];
+		string firstTwoDigitsOfYear = s_centuryMap[separator];
 
 		ReadOnlySpan<char> yearChars = string.Concat(firstTwoDigitsOfYear, lastTwoDigitsOfYear);
 
@@ -255,26 +257,46 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 
 	public override readonly string ToString()
 	{
-		return _ssn;
+		return this._ssn;
 	}
 
 	public override readonly bool Equals(object? obj)
 	{
-		return obj is FinnishSSN ssn && Equals(ssn);
+		return obj is FinnishSSN ssn && this.Equals(ssn);
 	}
 
 	public readonly bool Equals(FinnishSSN other)
 	{
-		return _ssn.Equals(other._ssn);
+		return this._ssn.Equals(other._ssn);
 	}
 
 	public override readonly int GetHashCode()
 	{
-		return _ssn.GetHashCode();
+		return this._ssn.GetHashCode();
 	}
 
 	public readonly int CompareTo(FinnishSSN other)
 	{
-		return DateOfBirth.CompareTo(other.DateOfBirth);
+		return this.DateOfBirth.CompareTo(other.DateOfBirth);
+	}
+
+	public static bool operator <(FinnishSSN left, FinnishSSN right)
+	{
+		return left.CompareTo(right) < 0;
+	}
+
+	public static bool operator <=(FinnishSSN left, FinnishSSN right)
+	{
+		return left.CompareTo(right) <= 0;
+	}
+
+	public static bool operator >(FinnishSSN left, FinnishSSN right)
+	{
+		return left.CompareTo(right) > 0;
+	}
+
+	public static bool operator >=(FinnishSSN left, FinnishSSN right)
+	{
+		return left.CompareTo(right) >= 0;
 	}
 }

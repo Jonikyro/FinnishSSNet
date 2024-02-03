@@ -9,5 +9,8 @@ public class Benchmarks
 
 
 	[Benchmark(Description = "Parse_Pin")]
-	public FinnishSSN Parse_Pin() => FinnishSSN.Parse(_pin);
+	public FinnishSSN Parse_Pin()
+	{
+		return FinnishSSN.Parse(this._pin);
+	}
 }
