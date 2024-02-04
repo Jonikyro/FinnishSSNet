@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace FinnishSSNet.Tests;
 
 public class FinnishSSNTests
@@ -5,7 +7,7 @@ public class FinnishSSNTests
 	[Fact]
 	public void Parse_ShouldThrow_WhenNullStringIsGiven()
 	{
-		_ = Assert.Throws<ArgumentNullException>(() => FinnishSSN.Parse(null));
+		_ = Assert.Throws<ArgumentNullException>(() => FinnishSSN.Parse(null!));
 	}
 
 	[Theory]
@@ -45,7 +47,9 @@ public class FinnishSSNTests
 	[Theory]
 	[InlineData("281398-930U")]
 	[InlineData("072055A964X")]
+#pragma warning disable S4144 // Methods should not have identical implementations
 	public void Parse_ShouldThrow_WhenSsnBirthDateHasOutOfBoundsMonth(string input)
+#pragma warning restore S4144 // Methods should not have identical implementations
 	{
 		FormatException ex = Assert.Throws<FormatException>(() => FinnishSSN.Parse(input));
 
@@ -68,7 +72,7 @@ public class FinnishSSNTests
 	public void Parse_ShouldParseBirthDateCorrectly_WhenSsnIsValid(string input, string expected)
 	{
 		FinnishSSN ssn = FinnishSSN.Parse(input);
-		Assert.Equal(ssn.DateOfBirth, DateOnly.Parse(expected));
+		Assert.Equal(ssn.DateOfBirth, DateOnly.Parse(expected, CultureInfo.InvariantCulture));
 	}
 
 	[Theory]
@@ -78,10 +82,30 @@ public class FinnishSSNTests
 	[InlineData("311000-970B", Gender.Female)]
 	[InlineData("010100A935L", Gender.Male)]
 	[InlineData("311216A9061", Gender.Female)]
-	public void Parse_ShouldParseGenderCorrectly_WhenSsnIsValid(string input, Gender expected)
+	public void Parse_ShouldParseGenderCorrectly(string input, Gender expected)
 	{
 		FinnishSSN ssn = FinnishSSN.Parse(input);
 		Assert.Equal(ssn.Gender, expected);
+	}
+
+	[Theory]
+	[InlineData("010100+928C", 1800)]
+	[InlineData("311299+9927", 1899)]
+	[InlineData("010100-907P", 1900)]
+	[InlineData("081154X924S", 1954)]
+	[InlineData("050602W963M", 1902)]
+	[InlineData("311299V969F", 1999)]
+	[InlineData("050892U941S", 1992)]
+	[InlineData("010100A941T", 2000)]
+	[InlineData("290204B918Y", 2004)]
+	[InlineData("030912C9254", 2012)]
+	[InlineData("080475D967X", 2075)]
+	[InlineData("091091E937K", 2091)]
+	[InlineData("011299F9107", 2099)]
+	public void Parse_ShouldParseTheCenturyCorrectly(string input, int expectedYear)
+	{
+		FinnishSSN ssn = FinnishSSN.Parse(input);
+		Assert.Equal(ssn.DateOfBirth.Year, expectedYear);
 	}
 
 	[Theory]
