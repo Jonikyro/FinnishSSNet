@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Collections.Frozen;
 using System.Diagnostics;
 
 namespace FinnishSSNet;
@@ -31,22 +32,22 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 	private static readonly SearchValues<char> s_digits = SearchValues.Create("0123456789");
 	private static readonly SearchValues<char> s_separators = SearchValues.Create("+-YXWVUABCDEF");
 	private static readonly SearchValues<char> s_checksumChars = SearchValues.Create(CHECKSUM_CHARS);
-	private static readonly IDictionary<char, string> s_centuryMap = new Dictionary<char, string>
+	private static readonly FrozenDictionary<char, string> s_centuryMap = new KeyValuePair<char, string>[]
 	 {
-		  { '+', "18" },
-		  { '-', "19" },
-		  { 'Y', "19" },
-		  { 'X', "19" },
-		  { 'W', "19" },
-		  { 'V', "19" },
-		  { 'U', "19" },
-		  { 'A', "20" },
-		  { 'B', "20" },
-		  { 'C', "20" },
-		  { 'D', "20" },
-		  { 'E', "20" },
-		  { 'F', "20" }
-	 };
+		new('+', "18"),
+		new('-', "19"),
+		new('Y', "19"),
+		new('X', "19"),
+		new('W', "19"),
+		new('V', "19"),
+		new('U', "19"),
+		new('A', "20"),
+		new('B', "20"),
+		new('C', "20"),
+		new('D', "20"),
+		new('E', "20"),
+		new('F', "20"),
+	}.ToFrozenDictionary();
 
 	private readonly string _ssn;
 	public readonly DateOnly DateOfBirth;
@@ -156,7 +157,10 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 		ReadOnlySpan<char> dateChars = ssn[..DATEPART_LENGTH];
 		ReadOnlySpan<char> rollingNumberChars = ssn.Slice(DATEPART_LENGTH + SEPARATOR_LENGTH, ROLLING_NUMBER_LENGTH);
 
-		ReadOnlySpan<char> checkNumberChars = string.Concat(dateChars, rollingNumberChars);
+		Span<char> checkNumberChars = stackalloc char[DATEPART_LENGTH + ROLLING_NUMBER_LENGTH];
+
+		dateChars.CopyTo(checkNumberChars[..DATEPART_LENGTH]);
+		rollingNumberChars.CopyTo(checkNumberChars.Slice(DATEPART_LENGTH, ROLLING_NUMBER_LENGTH));
 
 		if (!int.TryParse(checkNumberChars, out int checkNumber))
 		{
@@ -221,7 +225,10 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 
 		string firstTwoDigitsOfYear = s_centuryMap[separator];
 
-		ReadOnlySpan<char> yearChars = string.Concat(firstTwoDigitsOfYear, lastTwoDigitsOfYear);
+		Span<char> yearChars = stackalloc char[firstTwoDigitsOfYear.Length + lastTwoDigitsOfYear.Length];
+
+		firstTwoDigitsOfYear.AsSpan().CopyTo(yearChars[..firstTwoDigitsOfYear.Length]);
+		lastTwoDigitsOfYear.CopyTo(yearChars.Slice(firstTwoDigitsOfYear.Length, lastTwoDigitsOfYear.Length));
 
 		return int.Parse(yearChars);
 	}
