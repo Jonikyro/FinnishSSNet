@@ -8,11 +8,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{35321125-6881-47EB-AC61-E432F3C97553}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinnishSSNet.Tests", "FinnishSSNet.Tests\FinnishSSNet.Tests.csproj", "{7A01B28D-0315-406B-91F1-37D1BAEB74C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinnishSSNet.Performance", "FinnishSSNet.Performance\FinnishSSNet.Performance.csproj", "{36A9C664-9280-429A-9CA8-3747CB85D9C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinnishSSNet.Performance", "FinnishSSNet.Performance\FinnishSSNet.Performance.csproj", "{36A9C664-9280-429A-9CA8-3747CB85D9C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
