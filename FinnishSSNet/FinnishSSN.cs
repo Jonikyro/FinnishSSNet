@@ -67,7 +67,7 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 	/// </summary>
 	/// <exception cref="FormatException">When given SSN is not in correct format</exception>
 	/// <exception cref="ArgumentNullException">When given SSN is null</exception>
-	public static FinnishSSN Parse(string? ssn)
+	public static FinnishSSN Parse(string ssn)
 	{
 		ArgumentNullException.ThrowIfNull(ssn);
 
@@ -98,6 +98,8 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 	{
 		result = default;
 
+		if (ssn is null) return false;
+
 		if (
 			!IsCorrectFormat(ssn)
 			|| !PassesChecksumCheck(ssn)
@@ -114,35 +116,39 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 	/// <summary>
 	/// Checks if given <paramref name="ssn"/> is valid finnish social security number.
 	/// </summary>
-	public static bool IsValidFinnishSSN(ReadOnlySpan<char> ssn)
+	public static bool IsValidFinnishSSN(string ssn)
 	{
+		if (ssn is null) return false;
+
 		return IsCorrectFormat(ssn) && PassesChecksumCheck(ssn) && TryParseDateOfBirth(ssn, out _);
 	}
 
-	private static bool IsCorrectFormat(ReadOnlySpan<char> ssn)
+	private static bool IsCorrectFormat(string ssn)
 	{
-		if (ssn.IsEmpty || ssn.Length != EXPECTED_LENGTH)
+		if (ssn.Length is not EXPECTED_LENGTH)
 		{
 			return false;
 		}
 
-		if (ssn[..DATEPART_LENGTH].ContainsAnyExcept(s_digits))
+		ReadOnlySpan<char> ssnAsSpan = ssn.AsSpan();
+
+		if (ssnAsSpan[..DATEPART_LENGTH].ContainsAnyExcept(s_digits))
 		{
 			return false;
 		}
 
-		if (ssn.Slice(DATEPART_LENGTH, SEPARATOR_LENGTH).ContainsAnyExcept(s_separators))
+		if (ssnAsSpan.Slice(DATEPART_LENGTH, SEPARATOR_LENGTH).ContainsAnyExcept(s_separators))
 		{
 			return false;
 		}
 
-		if (ssn.Slice(DATEPART_LENGTH + SEPARATOR_LENGTH, ROLLING_NUMBER_LENGTH)
+		if (ssnAsSpan.Slice(DATEPART_LENGTH + SEPARATOR_LENGTH, ROLLING_NUMBER_LENGTH)
 				  .ContainsAnyExcept(s_digits))
 		{
 			return false;
 		}
 
-		if (ssn.Slice(
+		if (ssnAsSpan.Slice(
 				DATEPART_LENGTH + SEPARATOR_LENGTH + ROLLING_NUMBER_LENGTH, CHECKSUM_LENGTH)
 					 .ContainsAnyExcept(s_checksumChars))
 		{
