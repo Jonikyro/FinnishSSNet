@@ -33,7 +33,7 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 	private static readonly SearchValues<char> s_separators = SearchValues.Create("+-YXWVUABCDEF");
 	private static readonly SearchValues<char> s_checksumChars = SearchValues.Create(CHECKSUM_CHARS);
 	private static readonly FrozenDictionary<char, string> s_centuryMap = new KeyValuePair<char, string>[]
-	 {
+	{
 		new('+', "18"),
 		new('-', "19"),
 		new('Y', "19"),
@@ -189,24 +189,24 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 
 		ReadOnlySpan<char> dayChars = ssn[..2];
 
-		if (!int.TryParse(dayChars, out int day))
+		if (!int.TryParse(dayChars, out int dayOfBirth))
 		{
 			return false;
 		}
 
-		if (day is < 1 or > 31)
+		if (dayOfBirth is < 1 or > 31)
 		{
 			return false;
 		}
 
 		ReadOnlySpan<char> monthChars = ssn.Slice(2, 2);
 
-		if (!int.TryParse(monthChars, out int month))
+		if (!int.TryParse(monthChars, out int monthOfBirth))
 		{
 			return false;
 		}
 
-		if (month is < 1 or > 12)
+		if (monthOfBirth is < 1 or > 12)
 		{
 			return false;
 		}
@@ -214,13 +214,12 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 		int yearOfBirth = ParseYearOfBirth(ssn);
 
 		// Checks for leap year as well
-		if (day > DateTime.DaysInMonth(yearOfBirth, month))
+		if (dayOfBirth > DateTime.DaysInMonth(yearOfBirth, monthOfBirth))
 		{
 			return false;
 		}
 
-		dateOfBirth = new DateOnly(yearOfBirth, month, day);
-
+		dateOfBirth = new DateOnly(yearOfBirth, monthOfBirth, dayOfBirth);
 		return true;
 	}
 
