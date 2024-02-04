@@ -5,12 +5,11 @@ namespace FinnishSSNet.Performance;
 [MemoryDiagnoser]
 public class Benchmarks
 {
-	private readonly string _pin = "010106A981M";
+	private readonly string _ssn = "010106A981M";
 
-
-	[Benchmark(Description = "Parse_Pin")]
-	public FinnishSSN Parse_Pin()
+	[Benchmark]
+	public void Parse()
 	{
-		return FinnishSSN.Parse(this._pin);
+		FinnishSSN.Parse(this._ssn);
 	}
 }
