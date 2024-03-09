@@ -143,7 +143,7 @@ public class FinnishSSNTests
 	[InlineData("290224A975Y", true)]
 	public void TryParse_ShouldParseCorrectly(string input, bool expected)
 	{
-		bool result = FinnishSSN.TryParse(input, out FinnishSSN ssn);
+		bool result = FinnishSSN.TryParse(input, out FinnishSSN? ssn);
 
 		Assert.Equal(result, expected);
 

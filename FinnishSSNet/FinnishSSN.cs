@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.Collections.Frozen;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FinnishSSNet;
 
@@ -94,9 +95,11 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 	/// <summary>
 	/// Tries to parse given finnish <paramref name="ssn"/>.
 	/// </summary>
-	public static bool TryParse(string? ssn, out FinnishSSN result)
+	public static bool TryParse(
+		[NotNullWhen(returnValue: true)] string? ssn,
+		[NotNullWhen(returnValue: true)] out FinnishSSN? result)
 	{
-		result = default;
+		result = null;
 
 		if (ssn is null) return false;
 
@@ -109,7 +112,7 @@ public struct FinnishSSN : IEquatable<FinnishSSN>, IComparable<FinnishSSN>
 		}
 
 		Gender gender = ParseGender(ssn);
-		result = new FinnishSSN(ssn!, gender, dateOfBirth);
+		result = new FinnishSSN(ssn, gender, dateOfBirth);
 		return true;
 	}
 
